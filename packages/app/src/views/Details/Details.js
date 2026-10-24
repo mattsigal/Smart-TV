@@ -144,6 +144,8 @@ const Details = ({itemId: itemIdProp, initialItem, onPlay, onSelectItem, onSelec
 	// Seerr supplies the whole screen for a title the library doesn't have.
 	const seerrOnly = isSeerrOnlyItem(initialItem) && !seerrLibraryId;
 
+	const [collectionSort, setCollectionSort] = useState(DEFAULT_SORT);
+
 	const data = useDetailsItem({
 		itemId,
 		initialItem,
@@ -153,7 +155,8 @@ const Details = ({itemId: itemIdProp, initialItem, onPlay, onSelectItem, onSelec
 		recommendationsSupported,
 		seerrEnabled,
 		tagWithServerInfo,
-		skip: seerrOnly
+		skip: seerrOnly,
+		collectionSort
 	});
 	const {
 		setItem, isLoading: libraryLoading, isBlocked: blockedByRating, isSeed, seasons, episodes, seriesEpisodes, similar, extras, cast, nextUp, nextEpisode,
@@ -210,7 +213,16 @@ const Details = ({itemId: itemIdProp, initialItem, onPlay, onSelectItem, onSelec
 	const overviewBackRef = useRef(null);
 	const spotlightBackRef = useRef(null);
 	const trailerBackRef = useRef(null);
-	const modals = useDetailsModals({backHandlerRef, onArtworkClosed: refreshItem, seerrBackRef, overviewBackRef, spotlightBackRef, trailerBackRef});
+	const collectionSortBackRef = useRef(null);
+	const modals = useDetailsModals({
+		backHandlerRef,
+		onArtworkClosed: refreshItem,
+		seerrBackRef,
+		overviewBackRef,
+		spotlightBackRef,
+		trailerBackRef,
+		collectionSortBackRef
+	});
 	const {activeModal, openModal, closeModal, advancedResumeRef} = modals;
 
 	const trailer = useDetailsTrailer({
@@ -252,7 +264,6 @@ const Details = ({itemId: itemIdProp, initialItem, onPlay, onSelectItem, onSelec
 			user?.Policy?.IsAdministrator;
 	}, [item, user]);
 
-	const [collectionSort, setCollectionSort] = useState(DEFAULT_SORT);
 	const [customOrder, setCustomOrder] = useState([]);
 	const [collectionSortOpen, setCollectionSortOpen] = useState(false);
 
@@ -282,6 +293,13 @@ const Details = ({itemId: itemIdProp, initialItem, onPlay, onSelectItem, onSelec
 	const handleOpenCollectionSort = useCallback(() => setCollectionSortOpen(true), []);
 	const handleCloseCollectionSort = useCallback(() => setCollectionSortOpen(false), []);
 
+	useEffect(() => {
+		collectionSortBackRef.current = collectionSortOpen ? () => {
+			handleCloseCollectionSort();
+			return true;
+		} : null;
+	}, [collectionSortOpen, handleCloseCollectionSort]);
+
 	const isBoxSet = item?.Type === 'BoxSet';
 	const sortedPlaylistItems = useMemo(() => {
 		const shown = isBoxSet && !showsSection('playlistOrder') ? [] : playlistItems;
@@ -301,6 +319,13 @@ const Details = ({itemId: itemIdProp, initialItem, onPlay, onSelectItem, onSelec
 		const newOrder = currentItems.map((i) => i.Id);
 		setCustomOrder(newOrder);
 		setCollectionSort(SORT_CUSTOM);
+
+		window.requestAnimationFrame(() => {
+			const row = document.querySelector(`[data-index="${newIndex}"]`);
+			if (row) {
+				Spotlight.focus(row);
+			}
+		});
 
 		try {
 			await effectiveApi.saveCollectionOrder(item.Id, newOrder);

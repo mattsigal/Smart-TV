@@ -719,7 +719,11 @@ export default function Library(props) {
         const type = f.playlistGrouped ? 'square' : 'poster'
         let y = 40
         st.groupRows = groups.map((g) => {
-          const cards = g.items.map((it, i) => reuse(g.name, it, i, () => toCard(f.originalTitleMode !== 'off' ? { ...it, Name: formatInlineTitle(it.Name || '', it.OriginalTitle, f.originalTitleMode) } : it, type, i)))
+          const cards = g.items.map((it, i) => reuse(g.name, it, i, () => (
+            f.originalTitleMode !== 'off'
+              ? { ...toCard({ ...it, Name: formatInlineTitle(it.Name || '', it.OriginalTitle, f.originalTitleMode) }, type, i), raw: it }
+              : toCard(it, type, i)
+          )))
           const h = Row.heightFor('media', cards, type)
           const row = { key: g.name, title: g.name, type, y, h, items: cards }
           y += h

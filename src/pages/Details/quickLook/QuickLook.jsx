@@ -166,6 +166,7 @@ export default function QuickLook(props) {
 
   const layout = () => {
     const it = v.item
+    const s = v.settings
     const t = v.tokens
     const out = emptyList()
     const w = W

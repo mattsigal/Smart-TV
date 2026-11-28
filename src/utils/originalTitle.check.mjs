@@ -19,6 +19,8 @@ assert.equal(distinctOriginalTitle('Goodfellas', '   '), null);
 assert.equal(distinctOriginalTitle('Goodfellas', 'goodfellas'), null);
 assert.equal(distinctOriginalTitle('Amelie', 'Amélie'), null);
 assert.equal(distinctOriginalTitle('Amelie', 'Ame\u0301lie'), null);
+assert.equal(distinctOriginalTitle('Mat', 'Mắt'), null);
+assert.equal(distinctOriginalTitle('Mat', 'Ma\u0306\u0301t'), null);
 
 // distinctOriginalTitle preserves non-Latin scripts and non-Latin combining marks
 assert.equal(distinctOriginalTitle('Les Affranchis', ' Goodfellas '), 'Goodfellas');

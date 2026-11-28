@@ -70,7 +70,7 @@ export default function FocusedInfo(props) {
   const v = () => VARIANTS[props.variant] || VARIANTS.library
   const name = createMemo(() => {
     const it = props.item
-    const mode = settings.all().libraryOriginalTitleMode || 'off'
+    const mode = props.originalTitleMode ?? settings.all().libraryOriginalTitleMode ?? 'off'
     const raw = it ? (hud() && it.Type === 'Episode' && it.SeriesName ? `${it.SeriesName} - ${it.Name}` : formatInlineTitle(it.Name || '', it.OriginalTitle, mode)) : ''
     return fitText(raw || '', v().nameSize, 'bold', props.w || 1746)
   })

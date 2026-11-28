@@ -33,7 +33,14 @@ export const foldAccents = (value) => {
 			continue;
 		}
 		const ch = input.charAt(i);
-		const folded = code >= 0x80 ? ACCENT_FOLDS[ch.toUpperCase()] : null;
+		let folded = code >= 0x80 ? ACCENT_FOLDS[ch.toUpperCase()] : null;
+		if (!folded && code >= 0x80 && typeof ch.normalize === 'function') {
+			const nfd = ch.normalize('NFD');
+			const baseCode = nfd.charCodeAt(0);
+			if (nfd.length > 1 && ((baseCode >= 0x41 && baseCode <= 0x5a) || (baseCode >= 0x61 && baseCode <= 0x7a))) {
+				folded = nfd.charAt(0).toUpperCase();
+			}
+		}
 		prevIsLatin = Boolean(folded) || (code >= 0x41 && code <= 0x5a) || (code >= 0x61 && code <= 0x7a);
 		out += folded || ch;
 	}

@@ -69,7 +69,7 @@ const NEON_TILE = {
   subColor: '#00e5ff',
 }
 const FIELDS = 'SortName,OriginalTitle,ProductionYear,ImageTags,OfficialRating,CommunityRating,CriticRating,RunTimeTicks,ProviderIds,UserData,Genres,Studios'
-const FOLDER_FIELDS = 'PrimaryImageAspectRatio,SortName,Path,ChildCount,MediaSourceCount,ProductionYear,ImageTags,OfficialRating,CommunityRating,CriticRating,RunTimeTicks,UserData'
+const FOLDER_FIELDS = 'PrimaryImageAspectRatio,SortName,OriginalTitle,Path,ChildCount,MediaSourceCount,ProductionYear,ImageTags,OfficialRating,CommunityRating,CriticRating,RunTimeTicks,UserData'
 const FOCUS_SETTLE_MS = 150
 // A merged library orders the servers' pages by the dates the sort reads and searches the original titles.
 const MERGED_FIELDS = ',DateCreated,DateLastMediaAdded,PremiereDate'
@@ -91,6 +91,7 @@ export default function Library(props) {
     infoY: -1,
     infoW: 1746,
     focusedItem: null,
+    originalTitleMode: 'off',
     gridX: 87,
     viewTop: 316,
     gridW: 1746,
@@ -682,7 +683,7 @@ export default function Library(props) {
     let list = userDataSync.applyAll(my.items)
     const q = foldForSearch(my.query.trim())
     // A merged card also answers to each copy's title and the original title they share.
-    if (q) list = list.filter((it) => foldForSearch(my.merged ? mergedSearchText(it) : it.SortName || it.Name || '').indexOf(q) >= 0)
+    if (q) list = list.filter((it) => foldForSearch(my.merged ? mergedSearchText(it) : `${it.SortName || it.Name || ''} ${it.OriginalTitle || ''}`).indexOf(q) >= 0)
     if (f.isPlaylist && my.playlistTypes.length < PLAYLIST_CATEGORIES.length) {
       list = list.filter((it) => it.Type !== 'Playlist' || my.playlistTypes.indexOf(playlistCategory(it, my.categories)) >= 0)
     }
@@ -718,7 +719,7 @@ export default function Library(props) {
         const type = f.playlistGrouped ? 'square' : 'poster'
         let y = 40
         st.groupRows = groups.map((g) => {
-          const cards = g.items.map((it, i) => reuse(g.name, it, i, () => toCard(it, type, i)))
+          const cards = g.items.map((it, i) => reuse(g.name, it, i, () => toCard(f.originalTitleMode !== 'off' ? { ...it, Name: formatInlineTitle(it.Name || '', it.OriginalTitle, f.originalTitleMode) } : it, type, i)))
           const h = Row.heightFor('media', cards, type)
           const row = { key: g.name, title: g.name, type, y, h, items: cards }
           y += h
@@ -825,6 +826,7 @@ export default function Library(props) {
       st.infoX = c.infoX
       st.infoY = c.infoY
       st.infoW = gridW
+      st.originalTitleMode = f.originalTitleMode
       st.tileOpts = {
         cellW: m.tileW, cellH: m.tileH, padX: m.padX, padY: m.padY, cardW: m.cardW, cardH: m.cardH, posterH: m.posterH,
         showText: f.showText, ms: focusMs(200), slide: slideMs(200), artBg: t.os(0.05), mutedIcon: t.os(0.3),
@@ -1488,7 +1490,7 @@ export default function Library(props) {
       </view>
       <view>
         <Show when={st.infoY >= 0}>
-          <FocusedInfo x={st.infoX} y={st.infoY} w={st.infoW} item={st.focusedItem} />
+          <FocusedInfo x={st.infoX} y={st.infoY} w={st.infoW} item={st.focusedItem} originalTitleMode={st.originalTitleMode} />
         </Show>
       </view>
       <view x={st.gridX} y={st.viewTop} width={st.gridW} height={st.viewH} clipping>

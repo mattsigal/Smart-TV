@@ -882,7 +882,7 @@ export default function Frost(props) {
         >
           <view width={1920} height={1080} color="#00000080" />
           <view x={300} y={rm().y} width={1320} height={rm().h} borderRadius={60} color={ink('readMore', '#242428f7')}>
-            <text x={78} y={66 + rm().titleShift} fontFamily={rm().titleFont} fontSize={54} lineHeight={63} letterSpacing={-1} color={ink('text', '#ffffffff')}>
+            <text x={78} y={66 + rm().titleShift} fontFamily={rm().titleFont} fontSize={54} lineHeight={63} letterSpacing={-1} maxWidth={1164} maxLines={1} color={ink('text', '#ffffffff')}>
               {rm().title}
             </text>
             <text x={78} y={138 + rm().metaShift} fontFamily={semi()} fontSize={24} lineHeight={28} letterSpacing={sp()} color={ink('meta', '#ebebf5a6')}>

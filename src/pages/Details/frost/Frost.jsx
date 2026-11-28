@@ -34,6 +34,7 @@ import { softExternal } from '../stage/layout.js'
 import { softBlur, tmdbSoft } from './softArt.js'
 import { tx } from '../../../ui/fx.js'
 import { rgbTriplet } from '../../../ui/themeColor.js'
+import { eligibleOriginalTitle, formatInlineTitle } from '../../../utils/originalTitle.js'
 
 // The Frost details style: the title floats in a glass window over a blurred, dimmed copy of its own
 // art. The buttons sit in a toolbar over the window's foot, with the title's parts in a bar of tabs
@@ -289,7 +290,7 @@ export default function Frost(props) {
     // The heading over every tab but Overview.
     const hd = emptyList()
     if (m.tab !== 'overview') {
-      const caps = String(it.Name || '').toUpperCase()
+      const caps = formatInlineTitle(it.Name || '', eligibleOriginalTitle(it), v.settings && v.settings.detailOriginalTitleMode).toUpperCase()
       hd.texts.push({ k: 'hc', x: 84, y: 48 + cssShift(21), text: caps, size: 21, font: fontFor(caps, 'bold'), color: c.ink(0.62), lh: 27, ls: 0.9 })
       const title = tabLabel(m.tab)
       hd.texts.push({ k: 'ht', x: 84, y: 78 + cssShift(54), text: title, size: 54, font: fontFor(title, 'bold'), color: c.ink(1), lh: 63, ls: -1 })
@@ -548,8 +549,9 @@ export default function Frost(props) {
     const textH = lines.length * 48
     const clipH = Math.min(textH, READ_MORE_MAX - textY - 66)
     const h = textY + clipH + 66
+    const modalTitle = formatInlineTitle(it.Name || '', eligibleOriginalTitle(it), v.settings && v.settings.detailOriginalTitleMode)
     setRm({
-      open: true, title: it.Name || '', titleFont: fontFor(it.Name || '', 'bold'), titleShift: cssShift(54), meta, metaShift: cssShift(24),
+      open: true, title: modalTitle, titleFont: fontFor(modalTitle, 'bold'), titleShift: cssShift(54), meta, metaShift: cssShift(24),
       lines: lines.map((ln, i) => ({ k: `r${i}`, text: ln, font: fontFor(ln, 'regular'), y: i * 48 + cssShift(30) })),
       scroll: 0, textY, textH, clipH, h, y: (1080 - h) / 2,
     })

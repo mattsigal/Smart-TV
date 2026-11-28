@@ -26,6 +26,7 @@ import { heroWidth, spotlightCardFor, spotlightCardsFor, spotlightMetaPieces, su
 import { spotlightCardFallbackUrl } from './spotlightImages.js'
 import { loadSeerrPersonCredits, seerrPersonCards } from '../seerrPersonCredits.js'
 import { alphaHex } from '../../../ui/themeColor.js'
+import { detailOriginalTitleSubtitle, eligibleOriginalTitle, formatInlineTitle } from '../../../utils/originalTitle.js'
 
 // The Spotlight style: the backdrop under a baked scrim, the hero column at the top left, and a band
 // of summary cards along the bottom, each opening a panel with the sections it sums up. The page
@@ -202,7 +203,9 @@ export default function Spotlight(props) {
     const bars = downloadsLayout(bag.seerr && bag.seerr.downloads)
     const laid = layoutSpotlightHero({
       x0, y0, W: HERO_W, person: isPerson, avatar: bag.posterUrl, born: bag.born, ringColor: t.focus,
-      title: (bag.bookSeriesItem ? bag.bookSeriesItem.Name : it.Name) || '', tagline: bag.tagline, episode: it.Type === 'Episode', seriesLabel: it.SeriesName || '', logo, version,
+      title: formatInlineTitle((bag.bookSeriesItem ? bag.bookSeriesItem.Name : it.Name) || '', eligibleOriginalTitle(bag.bookSeriesItem || it), s.detailOriginalTitleMode),
+      originalSubtitle: detailOriginalTitleSubtitle((bag.bookSeriesItem ? bag.bookSeriesItem.Name : it.Name) || '', eligibleOriginalTitle(bag.bookSeriesItem || it), s.detailOriginalTitleMode, Boolean(logo && logo.w && it.Type !== 'Episode')),
+      tagline: bag.tagline, episode: it.Type === 'Episode', seriesLabel: it.SeriesName || '', logo, version,
       meta, seerrPills: seerrPillsOf(bag.seerr), techSize: bag.techSize, techChips: bag.techChips, ratings: bag.ratings,
       ratingStyle: { labels: s.showRatingLabels !== false, badges: s.showRatingBadges !== false },
       overview: overviewText, overviewExpanded: untrack(overviewExpanded), hasActions: row.buttons.length > 0, incomplete: bag.incomplete, downloadsH: bars.h,

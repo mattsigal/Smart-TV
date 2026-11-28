@@ -3207,5 +3207,10 @@
     "A panel of tiles with library artwork": "A panel of tiles with library artwork",
     "Browse all": "Browse all",
     "Continue in {section}": "Continue in {section}",
-    "Featured: {title}": "Featured: {title}"
+    "Featured: {title}": "Featured: {title}",
+    "Show Original Title": "Show Original Title",
+    "Show as Sub-Title": "Show as Sub-Title",
+    "Show in Parentheses": "Show in Parentheses",
+    "Display the original title on detail pages when it differs from the localized title": "Display the original title on detail pages when it differs from the localized title",
+    "Display the original title on library items when it differs from the localized title": "Display the original title on library items when it differs from the localized title"
 }

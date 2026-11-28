@@ -15,6 +15,7 @@ import { layoutMinimalist, logoBox, minimalistLeft } from './layout.js'
 import Episodes from './Episodes.jsx'
 import SectionModal from '../spotlight/SectionModal.jsx'
 import { alphaHex } from '../../../ui/themeColor.js'
+import { detailOriginalTitleSubtitle, eligibleOriginalTitle, formatInlineTitle } from '../../../utils/originalTitle.js'
 
 // The Minimalist details style: the artwork under a flat wash, and at the foot of the screen the
 // logo or title, an episode's name, one row of buttons and the episodes. No cast, no chapters, no
@@ -36,6 +37,7 @@ export default function Minimalist(props) {
   const [logo, setLogo] = createSignal(NONE)
   const [title, setTitle] = createSignal(NONE)
   const [episodeName, setEpisodeName] = createSignal(NONE)
+  const [originalSubtitle, setOriginalSubtitle] = createSignal(NONE)
   const [incomplete, setIncomplete] = createSignal(NONE)
   const [still, setStill] = createSignal(NONE)
   const [act, setAct] = createSignal({ buttons: [], x: 0, y: 0, held: true })
@@ -103,13 +105,19 @@ export default function Minimalist(props) {
     const logoSize = logoLive ? logoBox(lg.w, lg.h) : null
     // minimalistStillUrl asks for twice the width it's given, which the 1080p canvas never draws.
     const stillUrl = minimalistStillUrl(v.server, it, { settings: s, width: STILL_WIDTH / 2 })
+    const origTitle = eligibleOriginalTitle(it)
+    const displayTitle = formatInlineTitle(brand.title, origTitle, s.detailOriginalTitleMode)
+    const origSubText = detailOriginalTitleSubtitle(brand.title, origTitle, s.detailOriginalTitleMode, Boolean(logoLive && lg && lg.w))
     const laid = layoutMinimalist({
-      left, episodesH, logo: logoSize, title: logoLive ? '' : brand.title, episodeName: brand.episodeName, incomplete: Boolean(v.incomplete), still: Boolean(stillUrl),
+      left, episodesH, logo: logoSize, title: logoLive ? '' : displayTitle, episodeName: brand.episodeName, originalSubtitle: Boolean(origSubText), incomplete: Boolean(v.incomplete), still: Boolean(stillUrl),
     })
     setLogo(laid.logo && laid.logo.w ? { ...NONE, ...laid.logo, show: true, src: v.logoUrl } : NONE)
-    setTitle(laid.title ? { ...NONE, x: left, y: laid.title.y + cssShift(56), text: brand.title, font: fontFor(brand.title, 'bold'), show: true } : NONE)
+    setTitle(laid.title ? { ...NONE, x: left, y: laid.title.y + cssShift(56), text: displayTitle, font: fontFor(displayTitle, 'bold'), show: true } : NONE)
     setEpisodeName(
       laid.episodeName ? { ...NONE, x: left, y: laid.episodeName.y + cssShift(34), text: brand.episodeName, font: fontFor(brand.episodeName, 'bold'), show: true } : NONE,
+    )
+    setOriginalSubtitle(
+      laid.originalSubtitle && origSubText ? { ...NONE, x: left, y: laid.originalSubtitle.y + cssShift(22), text: origSubText, font: fontFor(origSubText, 'medium'), show: true } : NONE,
     )
     setIncomplete(laid.incomplete ? { ...NONE, x: left, y: laid.incomplete.y + cssShift(20), text: v.incomplete, font: fontFor(v.incomplete, 'bold'), show: true } : NONE)
     setStill(laid.still ? { ...NONE, ...laid.still, src: stillUrl, show: true } : NONE)
@@ -265,6 +273,21 @@ export default function Minimalist(props) {
         textShadow={SHADOW}
       >
         {episodeName().text}
+      </text>
+      <text
+        alpha={originalSubtitle().show ? 1 : 0}
+        x={originalSubtitle().x}
+        y={originalSubtitle().y}
+        fontFamily={originalSubtitle().font}
+        fontSize={22}
+        lineHeight={28}
+        letterSpacing={themeSpacing()}
+        maxWidth={760}
+        maxLines={1}
+        color="#ffffffc7"
+        textShadow={SHADOW}
+      >
+        {originalSubtitle().text}
       </text>
       <text
         alpha={incomplete().show ? 1 : 0}

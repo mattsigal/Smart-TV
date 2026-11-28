@@ -19,11 +19,25 @@ const ACCENT_FOLDS = {
 	'Ź': 'Z', 'Ž': 'Z', 'Ż': 'Z'
 };
 
-const NON_ASCII = /[\u0080-\uffff]/g;
-
-// Every accented letter the table knows comes back as its upper case base letter, and anything
-// else is left exactly as it was, so compare through foldForSearch or case fold it yourself.
-export const foldAccents = (value) =>
-	String(value ?? '').replace(NON_ASCII, (character) => ACCENT_FOLDS[character.toUpperCase()] || character);
+// Every accented letter the table knows comes back as its upper case base letter, combining
+// diacritical marks (U+0300-U+036F) after Latin letters are stripped, and anything else is left
+// exactly as it was, so compare through foldForSearch or case fold it yourself.
+export const foldAccents = (value) => {
+	const input = String(value ?? '');
+	let out = '';
+	let prevIsLatin = false;
+	for (let i = 0; i < input.length; i++) {
+		const code = input.charCodeAt(i);
+		if (code >= 0x0300 && code <= 0x036f) {
+			if (!prevIsLatin) out += input.charAt(i);
+			continue;
+		}
+		const ch = input.charAt(i);
+		const folded = code >= 0x80 ? ACCENT_FOLDS[ch.toUpperCase()] : null;
+		prevIsLatin = Boolean(folded) || (code >= 0x41 && code <= 0x5a) || (code >= 0x61 && code <= 0x7a);
+		out += folded || ch;
+	}
+	return out;
+};
 
 export const foldForSearch = (value) => foldAccents(value).toLowerCase();

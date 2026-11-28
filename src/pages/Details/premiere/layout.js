@@ -6,6 +6,7 @@ import { cssShift, fontFor, themeSpacing } from '../../../ui/text.js'
 import { stageMetaLine, stagePieces, stageRatings, stageTechLine } from '../stage/layout.js'
 import { stageSubtitle } from '../stage/stageRules.js'
 import { emptyList } from '../stage/Draw.js'
+import { detailOriginalTitleSubtitle, eligibleOriginalTitle, formatInlineTitle } from '../../../utils/originalTitle.js'
 
 export const HERO_PAD_X = 154
 export const VIEW_H = 1080
@@ -108,12 +109,15 @@ export const layoutHero = (out, v, { L, logo, arrow, bars }) => {
 
   const partOfShow = it.Type === 'Season' || it.Type === 'Episode'
   const name = (partOfShow && it.SeriesName) || it.Name || ''
+  const origMode = v.settings && v.settings.detailOriginalTitleMode
+  const origTitle = eligibleOriginalTitle(it)
+  const origSub = detailOriginalTitleSubtitle(name, origTitle, origMode, Boolean(logo && logo !== 'pending'))
   const parts = []
   if (logo && logo !== 'pending') {
     const k = Math.min(LOGO_BOX.w / logo.w, LOGO_BOX.h / logo.h)
     parts.push({ h: logo.h * k, draw: (top) => out.imgs.push({ k: 'logo', x: cx - (logo.w * k) / 2, y: top, w: logo.w * k, h: logo.h * k, src: logo.url, fit: 'contain' }) })
   } else if (!logo) {
-    const w = wrapSpaced(name.toUpperCase(), 100, 'bold', heroW, 6.7)
+    const w = wrapSpaced(formatInlineTitle(name, origTitle, origMode).toUpperCase(), 100, 'bold', heroW, 6.7)
     const lines = w.lines.slice(0, 2)
     parts.push({
       h: lines.length * 105,
@@ -121,6 +125,15 @@ export const layoutHero = (out, v, { L, logo, arrow, bars }) => {
         lines.forEach((ln, i) =>
           out.texts.push({ k: `title${i}`, x: cx - w.width(ln) / 2, y: top + i * 105 + cssShift(100), text: ln, size: 100, font: fontFor(ln, 'bold'), color: '#ffffffff', lh: 105, ls: 6.7, shadow: TITLE_SHADOW }),
         ),
+    })
+  }
+  if (origSub) {
+    const ow = Math.min(textWidth(origSub, 24, 'medium'), heroW)
+    parts.push({
+      gap: 10,
+      h: 32,
+      draw: (top) =>
+        out.texts.push({ k: 'origTitle', x: cx - ow / 2, y: top + cssShift(24), text: origSub, size: 24, font: fontFor(origSub, 'medium'), color: '#ffffffc7', lh: 32, maxw: heroW, maxlines: 1, shadow: TITLE_SHADOW }),
     })
   }
   const subtitle = stageSubtitle(it)

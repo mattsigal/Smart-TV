@@ -79,6 +79,7 @@ import { drawsMinimalist } from './minimalist/minimalistRules.js'
 import { drawsStage } from './stage/stageRules.js'
 import { STYLES, MODALS } from './parts.js'
 import { alphaHex } from '../../ui/themeColor.js'
+import { detailOriginalTitleSubtitle, eligibleOriginalTitle, formatInlineTitle } from '../../utils/originalTitle.js'
 
 // Every item type opens here, people, albums and artists included. Modern draws on this page, and
 // the other styles draw in their own components (parts.js) from what it loads and works out.
@@ -630,7 +631,8 @@ export default function Details(props) {
         avatar: posterUrl,
         seriesLabel: isEpisode && !logoLive && it.SeriesName ? it.SeriesName : '',
         logo,
-        title: isEpisode || !logoLive ? (m.bookSeries ? m.bookSeries.Name : it.Name) || '' : '',
+        title: isEpisode || !logoLive ? formatInlineTitle((m.bookSeries ? m.bookSeries.Name : it.Name) || '', eligibleOriginalTitle(m.bookSeries || it), s.detailOriginalTitleMode) : '',
+        originalSubtitle: detailOriginalTitleSubtitle((m.bookSeries ? m.bookSeries.Name : it.Name) || '', eligibleOriginalTitle(m.bookSeries || it), s.detailOriginalTitleMode, Boolean(logoLive && !isEpisode)),
         born,
         meta,
         incomplete,

@@ -40,6 +40,7 @@ import { OVERVIEW_LH, OVERVIEW_W, overviewHeight, pageGeometry, pinFor } from '.
 import { layoutSections } from './rails.js'
 import { layoutFooter } from './footer.js'
 import { alphaHex } from '../../../ui/themeColor.js'
+import { detailOriginalTitleSubtitle, eligibleOriginalTitle, formatInlineTitle } from '../../../utils/originalTitle.js'
 
 // The Nouveau details style draws everything on one page over the backdrop: the hero column, a band
 // per section and the details footer last. Up and Down walk one chain of stops (nouveauFocusChain),
@@ -376,7 +377,9 @@ export default function Nouveau(props) {
         logo,
         isSeason,
         isPerson,
-        name: (d.bookSeriesItem ? d.bookSeriesItem.Name : it.Name) || '',
+        name: formatInlineTitle((d.bookSeriesItem ? d.bookSeriesItem.Name : it.Name) || '', eligibleOriginalTitle(d.bookSeriesItem || it), s.detailOriginalTitleMode),
+        logoSubtitle: detailOriginalTitleSubtitle((d.bookSeriesItem ? d.bookSeriesItem.Name : it.Name) || '', eligibleOriginalTitle(d.bookSeriesItem || it), s.detailOriginalTitleMode, true),
+        fallbackSubtitle: detailOriginalTitleSubtitle((d.bookSeriesItem ? d.bookSeriesItem.Name : it.Name) || '', eligibleOriginalTitle(d.bookSeriesItem || it), s.detailOriginalTitleMode, false),
         status,
         upcoming: isSeries || isSeason ? d.upcoming : '',
         seerrPills: d.seerr && d.seerr.statusPills,

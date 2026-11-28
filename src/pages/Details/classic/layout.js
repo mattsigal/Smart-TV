@@ -222,12 +222,16 @@ const infoColumn = (out, d, x0, top, w, t) => {
   }
 
   if (d.logo) {
-    const at = place(0, d.logo.h, 17)
+    const at = place(0, d.logo.h, d.originalSubtitle ? 6 : 17)
     img(out, { k: 'logo', x: x0, y: at, w: d.logo.w, h: d.logo.h, src: d.logo.url, fit: 'contain', logo: true })
   } else {
     const lines = wrapLines(d.name, 46, 'bold', w)
-    const at = place(0, lines.length * 57.5, 12)
+    const at = place(0, lines.length * 57.5, d.originalSubtitle ? 6 : 12)
     lines.forEach((ln, i) => text(out, `title${i}`, x0, at + i * 57.5, ln, 46, 'bold', t.onSurface, { lh: 57.5 }))
+  }
+  if (d.originalSubtitle) {
+    const at = place(0, 28, 12)
+    text(out, 'origTitle', x0, at, d.originalSubtitle, 22, 'medium', t.os(0.72), { lh: 28, maxw: w, ellipsis: true })
   }
 
   // The facts and the stream chips beside them, or under them when they don't fit.

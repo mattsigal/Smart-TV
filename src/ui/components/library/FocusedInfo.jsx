@@ -3,6 +3,7 @@ import { For, Show, createEffect, createMemo, createSignal, on, onCleanup } from
 import { fontFor, uiFont } from '../../text.js'
 import { fitText, textWidth } from './measure.js'
 import { formatDuration, videoResolutionLabel } from '../../../utils/helpers.js'
+import { formatInlineTitle } from '../../../utils/originalTitle.js'
 import * as settings from '../../../state/settings.js'
 import { isMdblistEnabled } from '../../../services/mdblistApi.js'
 import RatingsRow from '../home/RatingsRow.jsx'
@@ -69,7 +70,8 @@ export default function FocusedInfo(props) {
   const v = () => VARIANTS[props.variant] || VARIANTS.library
   const name = createMemo(() => {
     const it = props.item
-    const raw = it ? (hud() && it.Type === 'Episode' && it.SeriesName ? `${it.SeriesName} - ${it.Name}` : it.Name) : ''
+    const mode = settings.all().libraryOriginalTitleMode || 'off'
+    const raw = it ? (hud() && it.Type === 'Episode' && it.SeriesName ? `${it.SeriesName} - ${it.Name}` : formatInlineTitle(it.Name || '', it.OriginalTitle, mode)) : ''
     return fitText(raw || '', v().nameSize, 'bold', props.w || 1746)
   })
   const meta = createMemo(() => {

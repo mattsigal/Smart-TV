@@ -37,6 +37,7 @@ import * as userDataSync from '../../services/userDataSync.js'
 import { getImageUrl, getPrimaryImageId } from '../../utils/helpers.js'
 import { showsVideoBadge, videoBadgeDuration } from '../../utils/videoCardBadge.js'
 import { foldForSearch } from '../../utils/accentFolding.js'
+import { formatInlineTitle } from '../../utils/originalTitle.js'
 import { libraryPosterSize, matchesStartLetter } from '../../utils/gridChrome.js'
 import { NO_FILTERS, buildFilterParams, hasActiveFilters } from '../../utils/libraryFilters.js'
 import { LIBRARY_GROUP_OPTIONS, groupByLabel, groupLibraryItems } from '../../utils/libraryGroupBy.js'
@@ -67,11 +68,11 @@ const NEON_TILE = {
   glow: { color: shadowColor('#ff2e9259'), x: 0, y: 0, blur: 12, spread: 0 },
   subColor: '#00e5ff',
 }
-const FIELDS = 'SortName,ProductionYear,ImageTags,OfficialRating,CommunityRating,CriticRating,RunTimeTicks,ProviderIds,UserData,Genres,Studios'
+const FIELDS = 'SortName,OriginalTitle,ProductionYear,ImageTags,OfficialRating,CommunityRating,CriticRating,RunTimeTicks,ProviderIds,UserData,Genres,Studios'
 const FOLDER_FIELDS = 'PrimaryImageAspectRatio,SortName,Path,ChildCount,MediaSourceCount,ProductionYear,ImageTags,OfficialRating,CommunityRating,CriticRating,RunTimeTicks,UserData'
 const FOCUS_SETTLE_MS = 150
 // A merged library orders the servers' pages by the dates the sort reads and searches the original titles.
-const MERGED_FIELDS = ',DateCreated,DateLastMediaAdded,PremiereDate,OriginalTitle'
+const MERGED_FIELDS = ',DateCreated,DateLastMediaAdded,PremiereDate'
 // How long the first page of a merged library waits on the signed-in server's titles before showing without them, so
 // a slow read never holds the grid back. The copies still find their cards, only which server's copy leads may differ.
 const PREFERRED_WAIT_MS = 1500
@@ -253,6 +254,7 @@ export default function Library(props) {
       showAlphabet: s.showAlphabeticalFilters === true,
       showLetters: s.showAlphabeticalFilters === true && !groupedActive && alphabetApplies({ sortKey, music, songs }),
       showText: s.libraryCardTitles !== false,
+      originalTitleMode: s.libraryOriginalTitleMode || 'off',
       detailed: s.useDetailedSubHeadings !== false,
       info: s.showMediaDetailsOnLibraryPage !== false,
       imageType: isPlaylist || music ? 'square' : my.imageType,
@@ -761,7 +763,7 @@ export default function Library(props) {
     const cardW = my.metrics.cardW
     // Double spaces in the subtitle fold into one, and both lines cut mid-word.
     const subtitle = f.showText ? fitText((cardSubtitle(it, folder, f.detailed) || '').replace(/\s+/g, ' '), 17, 'regular', cardW) : ''
-    const title = fitText(it.Name || '', 19, 'bold', cardW)
+    const title = fitText(formatInlineTitle(it.Name || '', it.OriginalTitle, f.originalTitleMode), 19, 'bold', cardW)
     const server = it._serverUrl || my.server
     let id = getPrimaryImageId(it)
     let type = 'Primary'

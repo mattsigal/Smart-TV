@@ -23,6 +23,7 @@ import { PAD_BOTTOM, classicLeft, layoutButtons, layoutHeader, layoutMetadata, l
 import { layoutSections } from './sections.js'
 import { pageScroll } from './scroll.js'
 import { paintAudio, paintPerson, paintPlaylist, paintSeason, personTabs } from './screens.js'
+import { detailOriginalTitleSubtitle, eligibleOriginalTitle, formatInlineTitle } from '../../../utils/originalTitle.js'
 
 // The Classic details style: one scrolling page with the header, the action tiles, the metadata
 // strip and the sections. Seasons, people, playlists and tracks get their own screens from
@@ -276,7 +277,8 @@ export default function Classic(props) {
       // A collection shows its titles' people as its own.
       item: it.Type === 'BoxSet' ? { ...it, People: bag.lists.cast } : it,
       posterUrl: posterOf(bag),
-      name: (bag.bookSeriesItem ? bag.bookSeriesItem.Name : it.Name) || '',
+      name: formatInlineTitle((bag.bookSeriesItem ? bag.bookSeriesItem.Name : it.Name) || '', eligibleOriginalTitle(bag.bookSeriesItem || it), bag.settings.detailOriginalTitleMode),
+      originalSubtitle: detailOriginalTitleSubtitle((bag.bookSeriesItem ? bag.bookSeriesItem.Name : it.Name) || '', eligibleOriginalTitle(bag.bookSeriesItem || it), bag.settings.detailOriginalTitleMode, Boolean(logo)),
       year: it.ProductionYear || '',
       officialRating: it.OfficialRating || '',
       seasonCount: it.ChildCount || bag.lists.seasons.length || 0,

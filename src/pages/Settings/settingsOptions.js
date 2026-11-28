@@ -47,6 +47,19 @@ export const getDateFormatOptions = () => [
 	{ value: 'dayMonth', label: $L('Day / Month (10 Nov)') }
 ];
 
+export const getDetailOriginalTitleModeOptions = () => [
+	{ value: 'off', label: $L('Off') },
+	{ value: 'replace', label: $L('Show Original Title') },
+	{ value: 'subtitle', label: $L('Show as Sub-Title') },
+	{ value: 'parentheses', label: $L('Show in Parentheses') }
+];
+
+export const getLibraryOriginalTitleModeOptions = () => [
+	{ value: 'off', label: $L('Off') },
+	{ value: 'replace', label: $L('Show Original Title') },
+	{ value: 'parentheses', label: $L('Show in Parentheses') }
+];
+
 export const getNewReleaseDaysOptions = () => [
 	{ value: 7, label: $L('7 days') },
 	{ value: 14, label: $L('14 days') },

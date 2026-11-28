@@ -31,6 +31,11 @@ export const layoutMinimalist = (d) => {
     incomplete = { y: top - 33 }
     top = incomplete.y - 8
   }
+  let originalSubtitle = null
+  if (d.originalSubtitle) {
+    originalSubtitle = { y: top - 28 }
+    top = originalSubtitle.y - 6
+  }
   let episodeName = null
   if (d.episodeName) {
     const lines = Math.min(2, wrapLines(d.episodeName, 34, 'bold', HEADLINE_W).length)
@@ -50,5 +55,5 @@ export const layoutMinimalist = (d) => {
     const h = w * 0.5625
     still = { x: d.left + Math.min(HEADLINE_W, contentW - 48 - w) + 48, y: upperBottom - h, w, h }
   }
-  return { headlineW: HEADLINE_W, actionsY, episodeName, incomplete, logo, title, still, episodesY, contentW }
+  return { headlineW: HEADLINE_W, actionsY, episodeName, originalSubtitle, incomplete, logo, title, still, episodesY, contentW }
 }

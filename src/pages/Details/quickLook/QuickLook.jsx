@@ -25,6 +25,7 @@ import { QUICK_LOOK_BUTTON_CAP, quickLookFacts, quickLookFade, quickLookNeighbou
 import { SEASON_H, seasonCards } from './seasons.js'
 import { statusDot } from '../../../ui/components/seerr/look.js'
 import { rgbTriplet } from '../../../ui/themeColor.js'
+import { detailOriginalTitleSubtitle, eligibleOriginalTitle, formatInlineTitle } from '../../../utils/originalTitle.js'
 
 // Quick Look: a title in a drawer down the right of the screen it was picked on, over a dimmed view
 // of that screen, with the full page a press away.
@@ -173,9 +174,16 @@ export default function QuickLook(props) {
 
     // The header: the name, the subtitle and the facts over the foot of the backdrop.
     let y = untrack(backdrop) ? HEADER_H - 56.8 : 106.9
-    const title = wrapLines(name, 45, 'bold', w).slice(0, 2)
+    const origTitle = eligibleOriginalTitle(it)
+    const origSub = detailOriginalTitleSubtitle(name, origTitle, s.detailOriginalTitleMode, false)
+    const title = wrapLines(formatInlineTitle(name, origTitle, s.detailOriginalTitleMode), 45, 'bold', w).slice(0, 2)
     title.forEach((ln, i) => out.texts.push({ k: `t${i}`, x: PAD, y: y + i * 51.75 + cssShift(45), text: ln, size: 45, font: fontFor(ln, 'bold'), color: '#ffffffff', lh: 51.75 }))
     y += title.length * 51.75
+    if (origSub) {
+      y += 4
+      out.texts.push({ k: 'origTitle', x: PAD, y: y + cssShift(22), text: origSub, size: 22, font: fontFor(origSub, 'medium'), color: '#ffffffb8', lh: 28, maxw: w, maxlines: 1 })
+      y += 28
+    }
     const subtitle = stageSubtitle(it)
     if (subtitle) {
       y += 6.7

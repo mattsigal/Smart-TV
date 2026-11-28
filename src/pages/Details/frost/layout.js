@@ -13,6 +13,7 @@ import { ratingValues } from '../modern/meta.js'
 import { resumeLine } from '../stage/stageRules.js'
 import { emptyList } from '../stage/Draw.js'
 import { FROST_COLUMNS } from './frostRules.js'
+import { detailOriginalTitleSubtitle, eligibleOriginalTitle, formatInlineTitle } from '../../../utils/originalTitle.js'
 
 export const wa = (hex, a) => `${String(hex).slice(0, 7)}${Math.round(Math.max(0, Math.min(1, a)) * 255).toString(16).padStart(2, '0')}`
 
@@ -122,8 +123,14 @@ export const overviewTab = (v, ww, wh, c, { tracks, credits, resume, status, wat
   const x0 = 84
   const cw = ww - 168
   const parts = []
-  const title = wrapLines(v.item.Name || '', 96, 'bold', cw).slice(0, 2)
+  const origMode = v.settings && v.settings.detailOriginalTitleMode
+  const origTitle = eligibleOriginalTitle(v.item)
+  const origSub = detailOriginalTitleSubtitle(v.item.Name || '', origTitle, origMode, false)
+  const title = wrapLines(formatInlineTitle(v.item.Name || '', origTitle, origMode), 96, 'bold', cw).slice(0, 2)
   parts.push({ gap: 0, h: title.length * 105, draw: (y) => title.forEach((ln, i) => T(out, `t${i}`, x0, y + i * 105, ln, 96, 'bold', c.ink(1), { lh: 105, ls: -2.4 })) })
+  if (origSub) {
+    parts.push({ gap: 6, h: 34, draw: (y) => T(out, 'origTitle', x0, y, origSub, 26, 'medium', c.ink(0.72), { lh: 34, maxw: cw, maxlines: 1 }) })
+  }
   const probe = emptyList()
   const metaH = metaLine(probe, v, x0, 0, cw, c)
   parts.push({ gap: 18, h: metaH, draw: (y) => metaLine(out, v, x0, y, cw, c) })

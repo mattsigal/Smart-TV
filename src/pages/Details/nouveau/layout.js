@@ -89,6 +89,12 @@ export const layoutHero = (d, t) => {
     }
     y += 106
   }
+  const origSub = d.logo ? (d.logo.w ? d.logoSubtitle : null) : d.fallbackSubtitle
+  if (origSub) {
+    y += 6
+    text(o, 'origTitle', x0, y, origSub, 20, 'medium', '#ffffffb8', { lh: 26, maxw: HERO_W, ellipsis: true })
+    y += 26
+  }
 
   // The series status, the next episode's date (in the focus color) and Seerr's pills, 9px apart
   // and Seerr's 12px apart in a group of their own. A row wider than the column squeezes the status

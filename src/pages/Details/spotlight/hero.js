@@ -198,6 +198,11 @@ export const layoutSpotlightHero = (d, t) => {
       if (d.version) versionBadge(out, d.version, x0 + Math.min(W, textWidth(d.title, 52, 'bold')) + 14, top, 59.8, t)
       y = top + 59.8
     }
+    if (d.originalSubtitle) {
+      const oy = y + 4
+      text(out, 'origTitle', x0, oy, d.originalSubtitle, 22, 'medium', '#ffffffb8', { lh: 28, maxw: W, maxlines: 1 })
+      y = oy + 28
+    }
   }
 
   if (d.meta.length) {

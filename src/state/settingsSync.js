@@ -13,6 +13,7 @@ import { isPlexServer } from '../utils/plexUrls.js'
 import { isValidHexColor } from '../theme/themeSpec.js'
 import { LEGACY_MEDIA_BAR_SOURCES, MEDIA_BAR_SORT_ORDERS, MEDIA_BAR_SOURCES, NEW_MOVIE_DAYS, NEW_RELEASE_DAYS } from '../utils/mediaBarNewRelease.js'
 import { DATE_FORMATS } from '../utils/dateFormat.js'
+import { DETAIL_ORIGINAL_TITLE_MODES, LIBRARY_ORIGINAL_TITLE_MODES } from '../utils/originalTitle.js'
 import { SUBTITLE_FONTS } from '../services/subtitleFonts.js'
 import {
   hasSeenServerLayout,
@@ -218,6 +219,8 @@ const VALUE_CONVERSIONS = {
   mediaBarMdblistRatingSources: surfaceRatingSources,
   homeRowImageTypes: { toServer: homeRowImageTypesToServer, fromServer: homeRowImageTypesFromServer },
   detailScreenStyle: { toServer: (v) => DETAIL_STYLE_NAMES[v], fromServer: detailStyleFromServer },
+  detailOriginalTitleMode: oneOf(DETAIL_ORIGINAL_TITLE_MODES),
+  libraryOriginalTitleMode: oneOf(LIBRARY_ORIGINAL_TITLE_MODES),
   // homeRows is missing on purpose. The layout is two server fields that move together.
 }
 
@@ -262,13 +265,13 @@ export const SYNCABLE_KEYS = [
   'mediaBarSourceType', 'mediaBarSortOrder', 'mediaBarLibraryIds', 'mediaBarCollectionIds', 'mediaBarExternalLists',
   'mediaBarNewReleaseBanner', 'mediaBarNewReleaseDays', 'mediaBarNewReleaseKinds', 'mediaBarNewMovieDays', 'mediaBarNewMovieDetail',
   'mediaBarOverlayColor', 'mediaBarOverlayOpacity',
-  'homeRows', 'homeRowsStyle', 'modernCardsOnMyMediaRow', 'detailScreenStyle', 'detailExpandedTabs', 'fullScreenRows', 'homeRowsPosterSize', 'useSeriesThumbnails',
+  'homeRows', 'homeRowsStyle', 'modernCardsOnMyMediaRow', 'detailScreenStyle', 'detailOriginalTitleMode', 'detailExpandedTabs', 'fullScreenRows', 'homeRowsPosterSize', 'useSeriesThumbnails',
   'episodePreviewEnabled', 'mediaPreviewMode', 'previewAudioEnabled', 'previewVolume',
   'hideDetailsMediaDescription', 'detailUseSeriesThumbnails', 'hideHomeMediaDescription',
   'hideHomeWatchProgress', 'hideHomeUnwatchedCount',
   'personPageSortOption', 'personPageGroupItems',
   'personalRatingStyle', 'recentlyReleasedSeriesType', 'mergeRecentRowsByType', 'hideWatchedInRecentRows', 'playlistsGroupByType', 'groupItemsIntoCollections',
-  'useDetailedSubHeadings', 'showMediaDetailsOnLibraryPage', 'libraryCardTitles', 'hideBackdropsInLibraries', 'hideLibraryWatchProgress', 'hideLibraryUnwatchedCount', 'libraryStyle', 'bookLibraryStyle', 'showBookDiscoverTab', 'bookFoldersAsSeries', 'musicLibraryStyle',
+  'useDetailedSubHeadings', 'showMediaDetailsOnLibraryPage', 'libraryCardTitles', 'libraryOriginalTitleMode', 'hideBackdropsInLibraries', 'hideLibraryWatchProgress', 'hideLibraryUnwatchedCount', 'libraryStyle', 'bookLibraryStyle', 'showBookDiscoverTab', 'bookFoldersAsSeries', 'musicLibraryStyle',
   'libraryPosterSize', 'playlistPosterSize',
   'keyboardStyle',
   'syncplayEnabled', 'syncplayAutoOpen',

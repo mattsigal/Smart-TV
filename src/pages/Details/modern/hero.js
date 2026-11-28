@@ -261,6 +261,11 @@ const titleBlock = (out, d, x0, y0, maxW, t) => {
     lines.forEach((ln, i) => text(out, `title${i}`, x0, ty + i * 63.44, ln, 52, 'bold', '#ffffffff', { lh: 63.44 }))
     y = ty + lines.length * 63.44
   }
+  if (d.originalSubtitle) {
+    const oy = y + 4
+    text(out, 'origTitle', x0, oy, d.originalSubtitle, 22, 'medium', '#ffffffb8', { lh: 28, maxw: maxW, maxlines: 1 })
+    y = oy + 28
+  }
   if (d.born) {
     const by = at()
     text(out, 'born', x0, by, d.born, 20, 'regular', '#ffffffb3', { lh: 33 })

@@ -27,6 +27,7 @@ import { collectionStops, rowStops, seerrSeasonsStop } from './stops.js'
 import { seerrBlock } from './seerrBlock.js'
 import { softBackdrop } from '../../../services/softBackdrop.js'
 import { alphaHex } from '../../../ui/themeColor.js'
+import { detailOriginalTitleSubtitle, eligibleOriginalTitle, formatInlineTitle } from '../../../utils/originalTitle.js'
 
 // The Stage details style: the poster stands on the left with Play and the other buttons under it,
 // and the title, its facts, ratings, tagline, overview, track pickers, the people and studios panel
@@ -240,14 +241,21 @@ export default function Stage(props) {
       let y = PAD_TOP
       const logo = logoFor(v)
       const name = (partOfShow && it.SeriesName) || it.Name || ''
+      const origTitle = eligibleOriginalTitle(it)
+      const origSub = detailOriginalTitleSubtitle(name, origTitle, s.detailOriginalTitleMode, Boolean(logo && logo.w))
       if (logo && logo.w) {
         const k = Math.min(1, 600 / logo.w, 173 / logo.h)
         out.imgs.push({ k: 'logo', x: bx, y, w: logo.w * k, h: logo.h * k, src: logo.url, fit: 'contain' })
         y += logo.h * k
       } else if (!logo) {
-        const lines = wrapLines(name, 63, 'bold', bw).slice(0, 2)
+        const lines = wrapLines(formatInlineTitle(name, origTitle, s.detailOriginalTitleMode), 63, 'bold', bw).slice(0, 2)
         lines.forEach((ln, i) => txt(out, `title${i}`, bx, y + i * 69.3, ln, 63, 'bold', '#ffffffff', { lh: 69.3 }))
         y += lines.length * 69.3
+      }
+      if (origSub) {
+        y += 6
+        txt(out, 'origTitle', bx, y, origSub, 24, 'medium', '#ffffffb8', { lh: 30, maxw: bw, maxlines: 1 })
+        y += 30
       }
       const subtitle = stageSubtitle(it)
       if (subtitle) {
